@@ -1,0 +1,34 @@
+/* statr main rulez */
+
+body{
+    background-color: #F4F4F4;
+}
+
+/* statr main rulez */
+
+/* statr login form */
+.login{
+    width: 300px;
+    margin:  100px auto;
+}
+
+.login h4 {
+    color: #888 ;
+
+}
+
+.login input{
+    margin-bottom: 10px;
+}
+/* end login form */
+
+.login .form-control {
+
+    background-color: #EAEAEA;
+}
+
+
+.login .btn {
+
+    background-color: #008dde;
+}
