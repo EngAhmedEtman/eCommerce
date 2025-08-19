@@ -4,12 +4,9 @@ session_start();
 $noNavbar = '';
 $pageTitle = 'Login';
 
-
-if (isset($_SESSION['username'])) {
-    header('location:dashboard.php');
-}
 include 'init.php';
 
+auth(null , 'dashboard.php') ;
 
 //chech if user coming from http post request
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -21,7 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $row = checkUserFound($username, $hashedPass);
     if ($row) {
         $_SESSION['GroupID'] = $row['GroupID'];
-        $_SESSION['id'] = $row['UserID'];
+        $_SESSION['id'] = $row['id'];
         $_SESSION['username'] = $row['Username'];
         header('location:dashboard.php');
         exit;

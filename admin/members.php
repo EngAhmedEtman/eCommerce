@@ -7,14 +7,9 @@ $pageTitle = 'members';
 === edit | delete | Add
 =================================
 */
-
-
-if (!isset($_SESSION['username'])) {
-    header('location: index.php');
-    exit();
-}
 include 'init.php';
 
+auth('index.php');
 
 // Show Edit Form
 function showEditForm($mode = 'add', $row = null)
@@ -33,7 +28,7 @@ function showEditForm($mode = 'add', $row = null)
 
                         <form action="<?= $action ?>" method="POST">
                             <?php if ($isEdit): ?>
-                                <input type="hidden" name="userid" value="<?= $row['UserID'] ?>">
+                                <input type="hidden" name="userid" value="<?= $row['id'] ?>">
                             <?php endif; ?>
                             <!-- Username -->
                             <div class="mb-3">
@@ -84,12 +79,11 @@ function showEditForm($mode = 'add', $row = null)
 <?php }
 
 
-$do = $_GET['do'] ?? 'manage';
-switch ($do) {
 
-    case 'manage':
+function renderMembersTable($rows)
+{
     ?>
-        <div class="container mt-5">
+    <div class="container mt-5">
             <!-- عنوان -->
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <h1 class="text-primary text-center">Manage Members</h1>
@@ -114,16 +108,15 @@ switch ($do) {
                         </thead>
                         <tbody>
                             <?php
-                            $rows = showData();
                             foreach ($rows as $row) {
                                 echo "<tr>";
-                                echo "<td>" . $row['UserID'] . "</td>";
+                                echo "<td>" . $row['id'] . "</td>";
                                 echo "<td>" . htmlspecialchars($row['Username']) . "</td>";
                                 echo "<td>" . htmlspecialchars($row['Email']) . "</td>";
                                 echo "<td>" . htmlspecialchars($row['FullName']) . "</td>";
                                 echo "<td>
-                        <a href='members.php?do=edit&userid=" . $row['UserID'] . "' class='btn btn-sm btn-primary'>Edit</a>
-                        <a href='members.php?do=delete&userid=" . $row['UserID'] . "' class='btn btn-sm btn-danger' onclick=\"return confirm('Are you sure?')\">Delete</a>
+                        <a href='members.php?do=edit&userid=" . $row['id'] . "' class='btn btn-sm btn-primary'>Edit</a>
+                        <a href='members.php?do=delete&userid=" . $row['id'] . "' class='btn btn-sm btn-danger' onclick=\"return confirm('Are you sure?')\">Delete</a>
                     </td>";
                                 echo "</tr>";
                             }
@@ -134,137 +127,15 @@ switch ($do) {
             </div>
         </div>
 
-<?php break;
-    case 'add':
-        showEditForm('add');
-        break;
-
-    case 'insert':
-
-        // validation
-        $data = [
-            'id'       => $_POST['userid'] ?? '',
-            'username' => $_POST['username'] ?? '',
-            'email'    => $_POST['email'] ?? '',
-            'full'     => $_POST['full'] ?? '',
-            'password' => $_POST['newPassword'] ?? '',
-        ];
-
-        $labels = [
-            'username' => 'اسم المستخدم',
-            'email'    => 'البريد الإلكتروني',
-            'full'     => 'الاسم الكامل',
-            'password' => 'كلمة المرور',
-        ];
-
-        $rules = [
-            'username' => ['require', 'min:3', 'max:20'],
-            'email'    => ['require', 'email', 'max:100'],
-            'full'     => ['require', 'min:6', 'max:50'],
-            'password' => ['require', 'password'],
-        ];
-
-        $errors = validation($data, $rules, $labels);
-        $url = "members.php?manage";
-        checkErrors($errors, $url);
-        if ((insertDataInDatabase())) {
-            setMessage('success', 'تم انشاء المستخدم بنجاح');
-            header('location:members.php?do=manage');
-            exit();
-        } else {
-            setMessage('error', 'خطأ اثناء الاضافة');
-            header('location:members.php?do=add');
-            exit();
-        }
-        break;
-
-    case 'edit':
-
-        $userid = isset($_GET['userid']) && is_numeric($_GET['userid']) ? intval($_GET['userid']) : 0;
-        $row = getMemberById($userid);
-
-        if ($row) {
-            showEditForm('edit', $row);
-        } else {
-            echo "<div class='alert alert-danger'>User Not Found</div>";
-        }
-        break;
 
 
-    case 'update':
-        echo "<h1 class='text-center'>Update Member</h1>";
-        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-
-            $oldPassword = $_POST['oldPassword'];
-            $newPassword = $_POST['newPassword'];
-            $pass = checkNewPasswordFound($oldPassword, $newPassword);
+<?php } 
 
 
-            // validation
-            $data = [
-                'id'       => $_POST['userid'] ?? '',
-                'username' => $_POST['username'] ?? '',
-                'email'    => $_POST['email'] ?? '',
-                'full'     => $_POST['full'] ?? '',
-                'password' => $pass ?? '',
-            ];
-
-            $labels = [
-                'username' => 'اسم المستخدم',
-                'email'    => 'البريد الإلكتروني',
-                'full'     => 'الاسم الكامل',
-                'password' => 'كلمة المرور',
-            ];
-
-            $rules = [
-                'username' => ['require', 'min:3', 'max:20'],
-                'email'    => ['require', 'email', 'max:100'],
-                'full'     => ['require', 'min:3', 'max:50'],
-                'password' => ['password'],
-            ];
-
-            $errors = validation($data, $rules, $labels);
-            $url = "members.php?do=edit&userid=" . $data['id'];
-            checkErrors($errors, $url);
-
-
-            if (updateMember($data) > 0) {
-                // عشان الاسم يظهر في الــ navbar 
-                // علطول بدون ما اسجل خروج وبعدها دخول
-                // $_SESSION['username'] = $_POST['username'];
-
-                setMessage('success', 'تم التعديل بنجاح');
-                header("Location: members.php?do=manage");
-                exit();
-            } else {
-                setMessage('error', 'خطأ اثناء التعديل، ءلم يتم التعديل');
-                header("Location: members.php?do=edit&userid=" . $data['id']);
-                exit();
-            }
-        }
-        break;
-
-
-    case 'delete':
-        $userid = isset($_GET['userid']) && is_numeric($_GET['userid']) ? intval($_GET['userid']) : 0;
-        $row = getMemberById($userid);
-        if (deleteUser($row)) {
-            setMessage('success', 'تم الحذف بنجاح');
-            header('location:members.php?do=manage');
-        } else {
-            setMessage('error', 'لم يتم الحذف');
-            header('location:members.php?do=manage');
-        }
-
-
-
-
-    default:
-        echo "<div class='alert alert-danger'>Invalid Action</div>";
-}
-
-
-
-
-
+include 'controller/membersController.php';
 include $tpl . "footer.php";
+
+
+
+
+

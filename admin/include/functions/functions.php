@@ -1,9 +1,23 @@
 <?php
 
+function auth($redirect_if_not_logged = null, $redirect_if_logged = null, $guard = 'username'){
+    if (!isset($_SESSION[$guard])) {
+        if ($redirect_if_not_logged !== null) {
+            header('location: ' . $redirect_if_not_logged);
+            exit();
+        }
+    } else {
+        if ($redirect_if_logged !== null) {
+            header('location: ' . $redirect_if_logged);
+            exit();
+        }
+    }
+}
 
 
-function pageTitle()
-{
+
+
+function pageTitle(){
     global $pageTitle;
 
     if (isset($pageTitle)) {
@@ -13,35 +27,47 @@ function pageTitle()
     }
 }
 
-function getMemberById($id)
-{
+
+
+function find($table, $id) {
     global $con;
-    $stmt = $con->prepare("SELECT * FROM users WHERE UserID = ? LIMIT 1");
+    $stmt = $con->prepare("SELECT * FROM $table WHERE id = ? LIMIT 1");
     $stmt->execute([$id]);
     return $stmt->fetch();
 }
 
 
-function updateMember(array $data)
-{
+function update(array $data, $id, $table = 'users'){
     global $con;
-    $stmt = $con->prepare("UPDATE users 
-                            SET Username = ?, Email = ?, FullName = ?, password = ?
-                            WHERE UserID = ?");
-    $stmt->execute(array($data['username'], $data['email'], $data['full'], $data['password'], $data['id']));
-    return  $stmt->rowCount();
+
+    if (empty($data)) {
+        return false; // مفيش حاجة تتحدث
+    }
+
+    $columns = array_keys($data);
+    $placeholders = array_map(fn($col) => "$col = :$col", $columns);
+
+    // أضف الـ id للبيانات قبل التنفيذ
+    $data['id'] = $id;
+
+    // هنا لازم تكتب العمود الاساسي ثابت (id) مش المتغير $id
+    $stmt = $con->prepare("UPDATE $table SET " . implode(", ", $placeholders) . " WHERE id = :id");
+
+    $stmt->execute($data);
+
+    return $stmt->rowCount();
 }
 
 
-function setMessage($type, $message)
-{
+
+
+function setMessage($type, $message){
     $_SESSION[$type] = $message;
 }
 
 
 
-function showMessage()
-{
+function showMessage(){
     if (isset($_SESSION['success'])) {
         echo '<div class="alert alert-success">' . $_SESSION['success'] . '</div>';
         unset($_SESSION['success']);
@@ -60,8 +86,7 @@ function showMessage()
 
 
 
-function checkUserFound($username, $hashedPass)
-{
+function checkUserFound($username, $hashedPass){
     global $con;
     $stmt = $con->prepare("SELECT 
                             *
@@ -84,66 +109,12 @@ function checkUserFound($username, $hashedPass)
 }
 
 
-function checkNewPasswordFound($oldPassword, $newPassword)
-{
+function checkNewPasswordFound($oldPassword, $newPassword){
     return  empty($newPassword) ?  $oldPassword :  sha1($newPassword);
 }
 
 
-function validation($values, $rules, $labels = [])
-{
-    $errors = [];
-
-    foreach ($rules as $fieldName => $fieldRules) {
-        // تنظيف أولي
-        $raw   = $values[$fieldName] ?? null;
-        $value = is_string($raw) ? trim($raw) : $raw;
-
-        // اسم العرض (تعريب)
-        $label = $labels[$fieldName] ?? $fieldName;
-
-        foreach ($fieldRules as $rule) {
-            if ($rule === 'require') {
-                if ($value === null || $value === '') {
-                    $errors[$fieldName][] = "$label مطلوب.";
-                }
-            } elseif (strpos($rule, 'max:') === 0) {
-                $max = (int) explode(':', $rule)[1];
-                if (mb_strlen((string)$value, 'UTF-8') > $max) {
-                    $errors[$fieldName][] = "$label يجب ألا يزيد عن $max حروف.";
-                }
-            } elseif (strpos($rule, 'min:') === 0) {
-                $min = (int) explode(':', $rule)[1];
-                if (mb_strlen((string)$value, 'UTF-8') < $min) {
-                    $errors[$fieldName][] = "$label يجب ألا يقل عن $min حروف.";
-                }
-            } elseif ($rule === 'phone') {
-                if (!preg_match('/^01[0-9]{9}$/', (string)$value)) {
-                    $errors[$fieldName][] = "$label يجب أن يكون رقم موبايل مصري صحيح.";
-                }
-            } elseif ($rule === 'email') {
-                if (!filter_var($value, FILTER_VALIDATE_EMAIL)) {
-                    $errors[$fieldName][] = "$label يجب أن يكون بريدًا إلكترونيًا صحيحًا.";
-                }
-            } elseif ($rule === 'password') {
-                if (mb_strlen((string)$value, 'UTF-8') < 6) {
-                    $errors[$fieldName][] = "$label خطأ في كلمة المرور";
-                }
-            } elseif ($rule === 'int') {
-                if (!filter_var($value, FILTER_VALIDATE_INT) && $value !== 0 && $value !== '0') {
-                    $errors[$fieldName][] = "$label يجب أن يكون رقمًا صحيحًا.";
-                }
-            }
-        }
-    }
-
-    return $errors;
-}
-
-
-
-function checkErrors($errors, $url)
-{
+function checkErrors($errors, $url){
     if (!empty($errors)) {
         foreach ($errors as $field => $msgs) {
             foreach ($msgs as $msg) {
@@ -156,49 +127,45 @@ function checkErrors($errors, $url)
 }
 
 
-
-function showData()
-{
+function showData($table , $condition = ""){
     global $con;
-    $stmt = $con->prepare("SELECT * FROM users WHERE GroupID !=1 ORDER BY UserID ASC");
+    $stmt = $con->prepare("SELECT * FROM $table $condition ");
     $stmt->execute();
     return $stmt->fetchAll();
 }
 
-function insertDataInDatabase()
-{
+
+function insert($table , $data){
     global $con;
-    try {
-        $stmt = $con->prepare("INSERT INTO users (Username,Password,Email,FullName)
-                                VALUES(:user, :pass, :email, :name)");
 
-        $stmt->execute(array(
-            'user' => $_POST['username'],
-            'pass' => sha1($_POST['newPassword']),
-            'email' => $_POST['email'],
-            'name' => $_POST['full'],
-        ));
+    if (empty($data)) {
+        return false; 
+    }
 
-        return true; // نجاح الإدخال
+    $columns = array_keys($data);
+    $placeholders = array_map(fn($col) => ":$col", $columns);
+    try{
+    $stmt = $con->prepare("INSERT INTO $table (" . implode(', ', $columns) . ") 
+        VALUES (" . implode(', ', $placeholders) . ")");
+
+        $stmt->execute($data);
+
+        return true;
     } catch (PDOException $e) {
-        return false; // فشل الإدخال
+        return false; 
     }
 }
 
-
-
-function deleteUser($row)
-{
+function delete($table ,$row){
     global $con;
 
-        try {
-        $stmt = $con->prepare("DELETE FROM users WHERE UserID = ? ");
-        $stmt->execute([$row['UserID']]);
-        return true ;
-        }catch (PDOException $e) {
+    try {
+        $stmt = $con->prepare("DELETE FROM $table WHERE id = ? ");
+        $stmt->execute([$row['id']]);
+        return true;
+    } catch (PDOException $e) {
         return false;
     }
 }
-
 
 
