@@ -1,20 +1,17 @@
-
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php pageTitle(); ?></title>
-        <link rel="stylesheet" href="<?php echo $css ?>bootstrap.min.css" />
-        <link rel="stylesheet" href="<?php echo $css ?>fontawesome.min.css" />
-        <link rel="stylesheet" href="<?php echo $css ?>backend.css" />
 
-         <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Bootstrap demo</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
-
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="<?php echo $css ?>bootstrap.min.css" />
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="<?php echo $css ?>fontawesome.min.css" />
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="<?php echo $css ?>backend.css" />
 </head>
 <body>

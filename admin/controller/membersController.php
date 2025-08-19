@@ -1,12 +1,22 @@
-<?php 
+<?php
 
 $do = $_GET['do'] ?? 'manage';
 switch ($do) {
 
     case 'manage':
+
+        $query = '';
+        if(isset($_GET['page']) && $_GET['page'] =='pending' )
+        {
+        $query =  'AND RegStatus = 0';
+        $rows = showData('users', "WHERE GroupID !=1 $query ORDER BY id ASC ");
+        renderMembersTable($rows);
+        break;
+        }else {
         $rows = showData('users', 'WHERE GroupID !=1 ORDER BY id ASC');
         renderMembersTable($rows);
         break;
+        }
 
     case 'add':
         showEditForm('add');
@@ -43,26 +53,36 @@ switch ($do) {
         $errors = validation($data, $rules, $labels);
         $url = "members.php?manage";
         checkErrors($errors, $url);
-        
-        if ((insert('users', $data))) {
-            setMessage('success', 'تم انشاء المستخدم بنجاح');
+
+        $repeted = findBy('users', $_POST['username'], 'Username');
+        if ($_POST['username'] != $repeted['Username']) {
+            if ((insertUser($data))) {
+                setMessage('success', 'تم انشاء المستخدم بنجاح');
+                header('location:members.php?do=manage');
+                exit();
+            } else {
+                setMessage('error', 'خطأ اثناء الاضافة');
+                header('location:members.php?do=add');
+                exit();
+            }
+            break;
+        } else {
+            setMessage('error', 'هذا المتسخدم موجود بالفعل');
             header('location:members.php?do=manage');
             exit();
-        } else {
-            setMessage('error', 'خطأ اثناء الاضافة');
-            header('location:members.php?do=add');
-            exit();
         }
-        break;
+
 
     case 'edit':
         $userid = isset($_GET['userid']) && is_numeric($_GET['userid']) ? intval($_GET['userid']) : 0;
-        $row = find('users', $userid);
+        $row = findBy('users', $userid);
 
         if ($row) {
             showEditForm('edit', $row);
         } else {
-            echo "<div class='alert alert-danger'>User Not Found</div>";
+            setMessage('error','هذا المستخدم غير موجود');
+            header('location:members.php?do=manage');
+
         }
         break;
 
@@ -104,40 +124,54 @@ switch ($do) {
             $url = "members.php?do=edit&userid=" . $userid;
             checkErrors($errors, $url);
 
-
-            if (update($data, $userid, 'users') > 0) {
-                // عشان الاسم يظهر في الــ navbar 
-                // علطول بدون ما اسجل خروج وبعدها دخول
-                // $_SESSION['username'] = $_POST['username'];
-
-                setMessage('success', 'تم التعديل بنجاح');
-                header("Location: members.php?do=manage");
-                exit();
+            // التأكد من ان اسم التسخدم غير موجود من قبل
+            $repeted = findBy('users', $_POST['username'], 'Username');
+            if ($_POST['username'] != $repeted['Username']) {
+                if (update($data, $userid, 'users') > 0) {
+                    setMessage('success', 'تم التعديل بنجاح');
+                    header("Location: members.php?do=manage");
+                    exit();
+                } else {
+                    setMessage('error', 'خطأ اثناء التعديل، ءلم يتم التعديل');
+                    header("Location: members.php?do=edit&userid=" . $userid);
+                    exit();
+                }
+                break;
             } else {
-                setMessage('error', 'خطأ اثناء التعديل، ءلم يتم التعديل');
-                header("Location: members.php?do=edit&userid=" . $userid);
+                setMessage('error', 'هذا المتسخدم موجود بالفعل');
+                header('location:members.php?do=manage');
                 exit();
             }
         }
-        break;
 
 
     case 'delete':
         $userid = isset($_GET['userid']) && is_numeric($_GET['userid']) ? intval($_GET['userid']) : 0;
-        $row = find('users', $userid);
+        $row = findBy('users', $userid);
         if (delete('users', $row)) {
             setMessage('success', 'تم الحذف بنجاح');
             header('location:members.php?do=manage');
+            break;
         } else {
             setMessage('error', 'لم يتم الحذف');
             header('location:members.php?do=manage');
+            break;
         }
 
-
+    case 'active':
+        $userid = isset($_GET['userid']) && is_numeric($_GET['userid']) ? intval($_GET['userid']) : 0;
+        if(updateSingleColumn('users','RegStatus',1,$userid) > 0){
+            setMessage('success', 'تم تحديث الحالة بنجاح');
+            header('location:members.php?do=manage');
+            break;
+        }
+        else{
+            setMessage('error', 'خطأ اثناء التحديث');
+            header('location:members.php?do=manage');
+            break;
+        }
 
 
     default:
         echo "<div class='alert alert-danger'>Invalid Action</div>";
 }
-
-

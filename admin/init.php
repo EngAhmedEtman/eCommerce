@@ -11,8 +11,8 @@ $css = 'layout/css/';   //css directly
 $js = 'layout/js/';   //js directly
 
 // include the important files
-include $func . 'validation.php';
 include $func . 'functions.php';
+include $func . 'validation.php';
 include $lang . 'english.php';
 include $tpl ."header.php";
 

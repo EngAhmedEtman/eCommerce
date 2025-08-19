@@ -17,7 +17,7 @@ function showEditForm($mode = 'add', $row = null)
     $isEdit = ($mode === 'edit');
     $action = $isEdit ? "?do=update" : "?do=insert";
     $title  = $isEdit ? "Edit Member" : "Add Member";
-    ?>
+?>
     <?php showMessage(); ?>
     <div class="container mt-5">
         <div class="row justify-content-center">
@@ -82,60 +82,59 @@ function showEditForm($mode = 'add', $row = null)
 
 function renderMembersTable($rows)
 {
-    ?>
+?>
     <div class="container mt-5">
-            <!-- عنوان -->
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h1 class="text-primary text-center">Manage Members</h1>
-                <a href="members.php?do=add" class="btn btn-success">
-                    <i class="bi bi-person-plus"></i> Add New Member
-                </a>
-            </div>
-            <!-- رسائل نجاح / خطأ -->
-            <?php showMessage(); ?>
-            <!-- جدول الأعضاء -->
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <table class="table table-bordered table-hover text-center align-middle">
-                        <thead class="table-dark">
+        <!-- عنوان -->
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h1 class="text-primary text-center">Manage Members</h1>
+            <a href="members.php?do=add" class="btn btn-success">
+                <i class="bi bi-person-plus"></i> Add New Member
+            </a>
+        </div>
+        <!-- رسائل نجاح / خطأ -->
+        <?php showMessage(); ?>
+        <!-- جدول الأعضاء -->
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <table class="table table-bordered table-hover text-center align-middle">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>#</th>
+                            <th>Username</th>
+                            <th>Email</th>
+                            <th>Full Name</th>
+                            <th>date</th>
+                            <th>Control</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($rows as $row) : ?>
                             <tr>
-                                <th>#</th>
-                                <th>Username</th>
-                                <th>Email</th>
-                                <th>Full Name</th>
-                                <th>Control</th>
+                                <td><?= $row['id'] ?></td>
+                                <td><?= htmlspecialchars($row['Username']) ?></td>
+                                <td><?= htmlspecialchars($row['Email']) ?></td>
+                                <td><?= htmlspecialchars($row['FullName']) ?></td>
+                                <td><?= htmlspecialchars($row['date']) ?></td>
+                                <td>
+                                    <a href="members.php?do=edit&userid=<?= $row['id'] ?>" class="btn btn-sm btn-primary">Edit</a>
+                                    <a href="members.php?do=delete&userid=<?= $row['id'] ?>" class="btn btn-sm btn-danger" onclick="return confirm('هل انت متأكد من الحذف ؟')">Delete</a>
+                                    <?php if($row['RegStatus'] == 0 ): ?>
+                                    <a href="members.php?do=active&userid=<?= $row['id'] ?>" class="btn btn-sm btn-warning" onclick="return confirm(' هل تريد تحديث حالة هذا المستخدم ؟')">Activate</a>
+
+                                        <?php endif; ?>
+                                </td>
                             </tr>
-                        </thead>
-                        <tbody>
-                            <?php
-                            foreach ($rows as $row) {
-                                echo "<tr>";
-                                echo "<td>" . $row['id'] . "</td>";
-                                echo "<td>" . htmlspecialchars($row['Username']) . "</td>";
-                                echo "<td>" . htmlspecialchars($row['Email']) . "</td>";
-                                echo "<td>" . htmlspecialchars($row['FullName']) . "</td>";
-                                echo "<td>
-                        <a href='members.php?do=edit&userid=" . $row['id'] . "' class='btn btn-sm btn-primary'>Edit</a>
-                        <a href='members.php?do=delete&userid=" . $row['id'] . "' class='btn btn-sm btn-danger' onclick=\"return confirm('Are you sure?')\">Delete</a>
-                    </td>";
-                                echo "</tr>";
-                            }
-                            ?>
-                        </tbody>
-                    </table>
-                </div>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
             </div>
         </div>
+    </div>
 
 
 
-<?php } 
+<?php }
 
 
 include 'controller/membersController.php';
 include $tpl . "footer.php";
-
-
-
-
-

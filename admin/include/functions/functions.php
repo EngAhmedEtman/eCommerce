@@ -29,11 +29,15 @@ function pageTitle(){
 
 
 
-function find($table, $id) {
+function findBy($table, $value , $column='id') {
     global $con;
-    $stmt = $con->prepare("SELECT * FROM $table WHERE id = ? LIMIT 1");
-    $stmt->execute([$id]);
-    return $stmt->fetch();
+    try {
+        $stmt = $con->prepare("SELECT * FROM $table WHERE $column = ? LIMIT 1");
+        $stmt->execute([$value]);
+        return $stmt->fetch();
+    } catch (PDOException $e) {
+        return false; 
+    }
 }
 
 
@@ -169,3 +173,50 @@ function delete($table ,$row){
 }
 
 
+function insertUser($data) {
+    // تحقق من كون الشخص الحالي أدمن (مثلاً GroupID = 1)
+    $isAdmin = isset($_SESSION['GroupID']) && $_SESSION['GroupID'] == 1;
+
+    // ضبط RegStatus حسب من أضاف المستخدم
+    $data['RegStatus'] = $isAdmin ? 1 : 0;
+
+    // استدعاء الفانكشن الأساسية لإدخال البيانات
+    return insert('users', $data);
+}
+
+
+function countWhere($table, $column = null, $value = null) {
+    global $con;
+    
+    // بناء الكويري
+    $sql = "SELECT COUNT(*) FROM $table";
+    
+    if ($column !== null && $value !== null) {
+        $sql .= " WHERE $column = :value";
+        $stmt = $con->prepare($sql);
+        $stmt->execute(['value' => $value]);
+    } else {
+        $stmt = $con->prepare($sql);
+        $stmt->execute();
+    }
+    
+    return $stmt->fetchColumn();
+}
+
+
+
+function updateSingleColumn($table, $column, $newValue, $id) {
+    global $con;
+
+    $sql = "UPDATE `$table` SET `$column` = :newValue WHERE `id` = :id";
+    try {
+        $stmt = $con->prepare($sql);
+        $stmt->execute([
+            ':newValue' => $newValue,
+            ':id' => $id
+        ]);
+        return $stmt->rowCount(); // عدد الصفوف المتحدثة
+    } catch (PDOException $e) {
+        return false;
+    }
+}
