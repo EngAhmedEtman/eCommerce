@@ -160,12 +160,12 @@ function insert($table , $data){
     }
 }
 
-function delete($table ,$row){
+function delete($table ,$id){
     global $con;
 
     try {
         $stmt = $con->prepare("DELETE FROM $table WHERE id = ? ");
-        $stmt->execute([$row['id']]);
+        $stmt->execute([$id]);
         return true;
     } catch (PDOException $e) {
         return false;
