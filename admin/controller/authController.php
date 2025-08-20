@@ -1,5 +1,7 @@
 <?php 
 
+
+
 function handleLoginShow()
 {
     auth(null ,'dashboard.php');
@@ -44,10 +46,9 @@ function handleLoginProcess()
     if($user)
     {   //تسجيل الدخول
 
-        $row = findBy('users','username','Username' );
-        $_SESSION['GroupID'] = $row['GroupID'];
-        $_SESSION['id'] = $row['id'];
-        $_SESSION['username'] = $data['username'];
+        $_SESSION['GroupID'] = $user['GroupID'];
+        $_SESSION['id'] = $user['id'];
+        $_SESSION['username'] = $user['Username'];
         redirectTo('dashboard.php');
     }else {
         setMessage('error', 'اسم المستخدم أو كلمة المرور غير صحيح');

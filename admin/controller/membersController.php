@@ -34,7 +34,7 @@ function handleMembersStore()
         'Username' => $_POST['username'] ?? '',
         'Email'    => $_POST['email'] ?? '',
         'FullName' => $_POST['full'] ?? '',
-        'password' => $_POST['newPassword'] ?? '',
+        'password' => sha1($_POST['newPassword']) ?? '',
     ];
     $labels = [
         'Username' => 'اسم المتتخدم',
@@ -76,12 +76,17 @@ function handleMembersStore()
 
 function handleMemberEdit($userid)
 {
+    if (!$userid || !is_numeric($userid) || $userid <= 0) {
+        setMessage('error', 'معرف المستخدم غير صالح');
+        redirectTo('members.php?do=manage');
+        return;
+    }
     
     $user = findBy('users', $userid);
     
     if (!$user) {
         setMessage('error', 'هذا المستخدم غير موجود');
-        redirectTo('members.php?do=edit');
+        redirectTo('members.php?do=manage'); // ✅ ارجع للصفحة الرئيسية
         return;
     }
     
@@ -91,7 +96,7 @@ function handleMemberEdit($userid)
     ];
     
     loadView('members/edit', $data);
-        
+     
 }
 
 

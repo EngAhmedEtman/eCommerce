@@ -54,7 +54,7 @@ switch ($do) {
     case 'active':
         $userid = isset($_GET['userid']) && is_numeric($_GET['userid']) ? intval($_GET['userid']) : 0;
         handleMembersActive($userid);
-
+        break;
 
     default:
         echo "<div class='alert alert-danger'>Invalid Action</div>";
