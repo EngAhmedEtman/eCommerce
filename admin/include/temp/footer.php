@@ -1,5 +1,6 @@
 
-
+<!-- <?php   ob_end_flush();
+?> -->
 <div class="footer">
 
 </div>
@@ -10,3 +11,5 @@
   </body>
 </body>
 </html>
+
+

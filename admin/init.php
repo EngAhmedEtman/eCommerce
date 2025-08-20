@@ -18,11 +18,11 @@ include $tpl ."header.php";
 
 //include nabvar on all pages expect the one with $noNavbar variable 
 
+ob_start();
 if(!isset($noNavbar))
 {
 include $tpl ."navbar.php";
 }
-
 
 
 

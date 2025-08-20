@@ -12,7 +12,7 @@ function handleMembersIndex()
     //تخزين البيانات لارساله لصفحة ال view
     $data = [
         'members' => $members,
-        'pageTitle' => 'Manage Members'
+        'pageTitle' => 'ادارة الاعضاء'
     ];
 
     // عرض الداتا
@@ -21,7 +21,7 @@ function handleMembersIndex()
 
 function handleMembersCreate() {
     $data = [
-        'pageTitle' => 'Add New Member'
+        'pageTitle' => 'اضافة مستخدم جديد'
     ];
     
     loadView('members/create', $data);
@@ -92,7 +92,7 @@ function handleMemberEdit($userid)
     
     $data = [
         'user' => $user,
-        'pageTitle' => 'Edit Member'
+        'pageTitle' => 'تعديل المستخدم'
     ];
     
     loadView('members/edit', $data);
@@ -105,7 +105,7 @@ function handleMembersUpdate($userid)
 
     $user = findBy('users', $userid);
     if (!$user) {
-        setMessage('error', 'دﻮﺟﻮﻣ ﺮﻴﻏ مﺪﺨﺘﺴﻤﻟا اﺬﻫ');
+        setMessage('error', 'هذا المستخدم غير موجود');
         redirectTo('members.php?do=manage');
         return;
     }
@@ -121,10 +121,10 @@ function handleMembersUpdate($userid)
         'password' => $password ?? '',
     ];
     $labels = [
-        'Username' => 'مﺪﺨﺘﺴﻤﻟا ﻢﺳا',
-        'Email'    => 'ﻲﻧوﺮﺘﻜﻟإلا ﺪﻳﺮﺒﻟا',
-        'FullName' => 'ﻞﻣﺎﻜﻟا ﻢﺳالا',
-        'password' => 'روﺮﻤﻟا ﺔﻤﻠﻛ',
+        'Username' => 'اسم المستخدم',
+        'Email'    => 'البريد الالكتروني',
+        'FullName' => 'الاسم كامل',
+        'password' => 'كلمة السر',
     ];
     $rules = [
         'Username' => ['require', 'min:3', 'max:20'],
@@ -164,7 +164,7 @@ function handleMembersDelete($userid)
     $user =  findBy('users', $userid);
 
     if (!$user) {
-        setMessage('error', 'دﻮﺟﻮﻣ ﺮﻴﻏ مﺪﺨﺘﺴﻤﻟا اﺬﻫ');
+        setMessage('error', 'هذا المستخدم غير موجود');
         redirectTo('members.php?do=manage');
         return;
     }

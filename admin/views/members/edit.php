@@ -9,31 +9,31 @@
                         <input type="hidden" name="userid" value="<?php echo $user['id']; ?>">
 
                         <div class="mb-3">
-                            <label class="form-label">Username</label>
+                            <label class="form-label">اسم المستخدم</label>
                             <input type="text" class="form-control"
                                 name="username"
                                 value="<?php echo htmlspecialchars($user['Username']); ?>" required>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Password</label>
+                            <label class="form-label">كلمة المرور</label>
                             <input type="hidden" name="oldPassword" value="<?php echo $user['password']; ?>">
                             <input type="password" class="form-control" name="newPassword">
                             <small class="text-muted">اتركه فارغا اذا لم تريد تغيير كلمة السر</small>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Email</label>
+                            <label class="form-label">البريد الالكتروني</label>
                             <input type="email" class="form-control"
                                 name="email"
                                 value="<?php echo htmlspecialchars($user['Email']); ?>" required>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Full Name</label>
+                            <label class="form-label">الاسم كامل</label>
                             <input type="text" class="form-control"
                                 name="full"
                                 value="<?php echo htmlspecialchars($user['FullName']); ?>" required>
                         </div>
                         <div class="d-grid">
-                            <input type="submit" value="Update Member" class="btn btn-primary">
+                            <input type="submit" value="تعديل بيانات المستخدم" class="btn btn-primary">
                         </div>
                     </form>
                 </div>
