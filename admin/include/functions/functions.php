@@ -1,5 +1,7 @@
 <?php
 
+
+
 function auth($redirect_if_not_logged = null, $redirect_if_logged = null, $guard = 'username'){
     if (!isset($_SESSION[$guard])) {
         if ($redirect_if_not_logged !== null) {
@@ -219,4 +221,26 @@ function updateSingleColumn($table, $column, $newValue, $id) {
     } catch (PDOException $e) {
         return false;
     }
+}
+
+
+
+function loadView($viewName, $data = [])
+{
+    extract($data);
+
+    $viewFile = "views/{$viewName}.php";
+    if (file_exists($viewFile)) {
+        include $viewFile;
+    } else {
+        echo "<div class='alert alert-danger'>View file not found: {$viewFile}</div>";
+    }
+}
+
+
+
+function redirectTo($url)
+{
+    header("Location: {$url}");
+    exit();
 }

@@ -21,7 +21,7 @@
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                         <li><a class="dropdown-item" href="members.php?do=edit&userid=<?php echo $_SESSION['id']; ?>">Edit Profile</a></li>
                         <li><a class="dropdown-item" href="#">Settings</a></li>
-                        <li><a class="dropdown-item" href="logout.php">Logout</a></li>
+                        <li><a class="dropdown-item" href="index.php?do=logout">Logout</a></li>
                     </ul>
                 </li>
             </ul>

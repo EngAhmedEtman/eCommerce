@@ -76,11 +76,12 @@ function handleMembersStore()
 
 function handleMemberEdit($userid)
 {
-        $user = findBy('users', $userid);
+    
+    $user = findBy('users', $userid);
     
     if (!$user) {
         setMessage('error', 'هذا المستخدم غير موجود');
-        redirectTo('members.php?do=manage');
+        redirectTo('members.php?do=edit');
         return;
     }
     
@@ -181,27 +182,6 @@ function handleMembersActive($userid)
         setMessage('error', 'خطأ اثناء التحديث');
     }
     redirectTo('members.php?do=manage');
-}
-
-
-function loadView($viewName, $data = [])
-{
-    extract($data);
-
-    $viewFile = "views/{$viewName}.php";
-    if (file_exists($viewFile)) {
-        include $view_file;
-    } else {
-        echo "<div class='alert alert-danger'>View file not found: {$view_file}</div>";
-    }
-}
-
-
-
-function redirectTo($url)
-{
-    header("Location: {$url}");
-    exit();
 }
 
 
