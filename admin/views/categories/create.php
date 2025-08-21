@@ -27,7 +27,7 @@
                             <label for="categoryDesc" class="form-label">الوصف</label>
                             <textarea class="form-control"
                                 id="categoryDesc"
-                                name = "dscription"
+                                name = "description"
                                 rows="3"
                                 placeholder="اكتب وصف مختصر للقسم"></textarea>
                         </div>

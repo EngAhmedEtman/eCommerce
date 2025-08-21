@@ -5,7 +5,7 @@
             <div class="card shadow-lg rounded-3">
                 <div class="card-body p-4">
                     <h1 class="text-center mb-4"><?php echo $pageTitle; ?></h1>
-                    <form action="members.php?do=insert" method="POST">
+                    <form action="members.php?do=insert" method="POST" enctype="multipart/form-data">
                         <div class="mb-3">
                             <label class="form-label">اسم المتخدم</label>
                             <input type="text" class="form-control" name="username" required>
@@ -21,6 +21,17 @@
                         <div class="mb-3">
                             <label class="form-label">الاسم كامل</label>
                             <input type="text" class="form-control" name="full" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">رقم الهاتف</label>
+                            <input type="text" class="form-control" name="phone" required>
+                        </div>
+
+                        <!-- الصورة -->
+                        <div class="mb-3">
+                            <label for="productImage" class="form-label">الصورة</label>
+                            <input type="file" id="userImage" name="image" class="form-control">
                         </div>
                         <div class="d-grid">
                             <input type="submit" value="اضافة مستخدم" class="btn btn-primary">

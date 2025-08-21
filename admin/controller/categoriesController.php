@@ -18,21 +18,21 @@ function handleCategoriesStore()
     // تجهيز الداتا
     $data = [
         'name'          => $_POST['name'] ?? '',
-        'dscription'    => $_POST['dscription'] ?? '',
+        'description'    => $_POST['description'] ?? '',
         'visibility'    => $_POST['visibility'] ?? '',
         'allowComment'  => $_POST['allowComment'] ?? '',
         'allowAds'  => $_POST['allowAds'] ?? '',
     ];
     $labels = [
         'name'          => 'اسم القسم',
-        'dscription'    => 'وصف القسم',
+        'description'    => 'وصف القسم',
         'visibility'    => 'إظهار القسم',
         'allowComment'  => 'إظهار التعليقات',
         'allowAds'  => 'إظهار الاعلانات',
     ];
     $rules = [
         'name' => ['require', 'min:3', 'max:20'],
-        'dscription'    => ['require', 'max:100'],
+        'description'    => ['require', 'max:100'],
         'visibility' => ['require'],
         'allowComment' => ['require'],
         'allowAds' => ['require'],
@@ -44,8 +44,8 @@ function handleCategoriesStore()
         return;
     }
     //التأكد من ان المستخدم غير موجود من قبل
-    $existing_user = findBy('categories', $_POST['name'], 'name');
-    if ($existing_user && $_POST['name'] == $existing_user['name']) {
+    $existingCategorie = findBy('categories', $_POST['name'], 'name');
+    if ($existingCategorie && $_POST['name'] == $existingCategorie['name']) {
         setMessage('error', 'هذا القسم موجود بالفعل');
         redirectTo('categories.php?do=manage');
         return;
@@ -98,21 +98,21 @@ function handleCategoriesUpdate($id)
 
     $data = [
         'name'          => $_POST['name'] ?? '',
-        'dscription'    => $_POST['dscription'] ?? '',
+        'description'    => $_POST['description'] ?? '',
         'visibility'    => $_POST['visibility'] ?? '',
         'allowComment'  => $_POST['allowComment'] ?? '',
         'allowAds'  => $_POST['allowAds'] ?? '',
     ];
     $labels = [
         'name'          => 'اسم القسم',
-        'dscription'    => 'وصف القسم',
+        'description'    => 'وصف القسم',
         'visibility'    => 'إظهار القسم',
         'allowComment'  => 'إظهار التعليقات',
         'allowAds'  => 'إظهار الاعلانات',
     ];
     $rules = [
         'name' => ['require', 'min:3', 'max:20'],
-        'dscription'    => ['require', 'max:100'],
+        'description'    => ['require', 'max:100'],
         'visibility' => ['require'],
         'allowComment' => ['require'],
         'allowAds' => ['require'],

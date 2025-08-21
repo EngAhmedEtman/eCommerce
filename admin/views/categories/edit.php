@@ -13,14 +13,14 @@
 
                 <div class="card-body p-4">
                     <form action="categories.php?do=update" method="POST">
-                    <input type="hidden" name="id" value="<?php echo $categorie['id']; ?>">
+                    <input type="hidden" name="id" value="<?php echo htmlspecialchars($categorie['id']); ?>">
 
                         <!-- Category Name -->
                         <div class="mb-3">
                             <label for="categoryName" class="form-label">اسم القسم</label>
                             <input type="text"
                                 name="name"
-                                value="<?php echo $categorie['name']; ?>"
+                                value="<?php echo htmlspecialchars($categorie['name']); ?>"
                                 class="form-control"
                                 required>
                         </div>
@@ -30,8 +30,8 @@
                             <label for="categoryDesc" class="form-label">الوصف</label>
                             <textarea class="form-control"
                                 id="categoryDesc"
-                                name="dscription"
-                                rows="3"> <?php echo $categorie['dscription']; ?> </textarea>
+                                name="description"
+                                rows="3"> <?php echo htmlspecialchars($categorie['description']); ?> </textarea>
                         </div>
 
                         <!-- Visibility -->

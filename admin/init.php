@@ -4,11 +4,11 @@ include 'connect.php';
 
 // routes
 
-$tpl = 'include/temp/'; //template directly
+$tpl = 'include/temp/';                 //template directly
 $lang = 'include/languages/';
-$func = 'include/functions/';      //function directly
-$css = 'layout/css/';   //css directly
-$js = 'layout/js/';   //js directly
+$func = 'include/functions/';         //function directly
+$css = 'layout/css/';                //css directly
+$js = 'layout/js/';                 //js directly
 
 // include the important files
 include $func . 'functions.php';

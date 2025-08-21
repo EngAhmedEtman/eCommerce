@@ -35,6 +35,7 @@
         <thead class="table-light">
           <tr>
             <th>#</th>
+            <th>الصورة</th>
             <th>اسم المستخدم</th>
             <th>البريد الإلكتروني</th>
             <th>الاسم الكامل</th>
@@ -43,30 +44,35 @@
           </tr>
         </thead>
         <tbody>
-          <?php foreach ($members as $member): ?>
+          <?php
+          $i = 1;
+          foreach ($members as $member): ?>
             <tr>
-              <td><?php echo $member['id']; ?></td>
+              <td><?= $i++; ?></td>
+              <td>
+                <img src="uploads/<?= htmlspecialchars($member['image']) ?: 'default.png'; ?>" width="60" height="60" class="rounded">
+              </td>
               <td><?php echo htmlspecialchars($member['Username']); ?></td>
               <td><?php echo htmlspecialchars($member['Email']); ?></td>
               <td><?php echo htmlspecialchars($member['FullName']); ?></td>
               <td><?php echo htmlspecialchars($member['date']); ?></td>
               <td class="text-center">
                 <a href="members.php?do=edit&userid=<?php echo $member['id']; ?>"
-                   class="btn btn-sm btn-warning me-1">
-                   <i class="fa-solid fa-pen-to-square"></i> تعديل
+                  class="btn btn-sm btn-warning me-1">
+                  <i class="fa-solid fa-pen-to-square"></i> تعديل
                 </a>
 
                 <a href="members.php?do=delete&userid=<?php echo $member['id']; ?>"
-                   class="btn btn-sm btn-danger me-1"
-                   onclick="return confirm('هل أنت متأكد من حذف هذا العضو؟');">
-                   <i class="fa-solid fa-trash"></i> حذف
+                  class="btn btn-sm btn-danger me-1"
+                  onclick="return confirm('هل أنت متأكد من حذف هذا العضو؟');">
+                  <i class="fa-solid fa-trash"></i> حذف
                 </a>
 
                 <?php if ($member['RegStatus'] == 0): ?>
                   <a href="members.php?do=active&userid=<?php echo $member['id']; ?>"
-                     class="btn btn-sm btn-success"
-                     onclick="return confirm('هل أنت متأكد من تفعيل هذا العضو؟');">
-                     <i class="fa-solid fa-check"></i> تفعيل
+                    class="btn btn-sm btn-success"
+                    onclick="return confirm('هل أنت متأكد من تفعيل هذا العضو؟');">
+                    <i class="fa-solid fa-check"></i> تفعيل
                   </a>
                 <?php endif; ?>
               </td>

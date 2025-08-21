@@ -29,23 +29,31 @@ function handleMembersCreate() {
 
 function handleMembersStore()
 {
-        // تجهيز الداتا
+   // تجهيز الداتا
+       $uploadedImage = handleUserImage();
+
         $data = [
         'Username' => $_POST['username'] ?? '',
         'Email'    => $_POST['email'] ?? '',
         'FullName' => $_POST['full'] ?? '',
+        'image' => $uploadedImage ?? '',
+        'phone' => $_POST['phone'] ?? '',
         'password' => sha1($_POST['newPassword']) ?? '',
     ];
     $labels = [
         'Username' => 'اسم المتتخدم',
         'Email'    => 'البريد الالكتروني',
         'FullName' => 'الاسم الكامل',
+        'image' => 'الصورة',
+        'phone' => 'رقم الهاتف',
         'password' => 'كلمة المرور',
     ];
     $rules = [
         'Username' => ['require', 'min:3', 'max:20'],
         'Email'    => ['require', 'email', 'max:100'],
         'FullName' => ['require', 'min:6', 'max:50'],
+        'phone' => ['require', 'phone'],
+        'image' => [],
         'password' => ['require', 'password'],
     ];
     $errors = validation($data, $rules, $labels);
@@ -114,22 +122,30 @@ function handleMembersUpdate($userid)
     $new_password = $_POST['newPassword'];
     $password = checkNewPasswordFound($old_password, $new_password);
 
+        $uploadedImage = handleUserImage();
+
     $data = [
         'Username' => $_POST['username'] ?? '',
         'Email'    => $_POST['email'] ?? '',
         'FullName' => $_POST['full'] ?? '',
+        'image' => $uploadedImage ?: $user['image'],
+        'phone' => $_POST['phone'] ?? '',
         'password' => $password ?? '',
     ];
     $labels = [
         'Username' => 'اسم المستخدم',
         'Email'    => 'البريد الالكتروني',
         'FullName' => 'الاسم كامل',
+        'image' => 'صورة المستخدم',
+        'phone' => 'رقم الهاتف',
         'password' => 'كلمة السر',
     ];
     $rules = [
         'Username' => ['require', 'min:3', 'max:20'],
         'Email'    => ['require', 'email', 'max:100'],
         'FullName' => ['require', 'min:3', 'max:50'],
+        'phone' => ['require', 'phone'],
+        'image' => [],
         'password' => ['password'],
     ];
 
@@ -147,6 +163,7 @@ function handleMembersUpdate($userid)
     }
 
     if (update($data, $userid, 'users') > 0) {
+        $_SESSION['userImage'] = $data['image'];
         setMessage('success', 'تم التعديل بنجاح');
         header("Location: members.php?do=manage");
         exit();
@@ -190,3 +207,43 @@ function handleMembersActive($userid)
 }
 
 
+function handleUserImage()
+{
+
+    // لو فيه صورة
+    if (isset($_FILES['image']) && $_FILES['image']['error'] == 0) {
+
+        // بيانات عن الصورة
+        $imageName = $_FILES['image']['name'];
+        $imageSize = $_FILES['image']['size'];
+        $tmpName   = $_FILES['image']['tmp_name'];
+
+        // الامتدادات المسموحة
+        $allowedExt = ['jpg', 'jpeg', 'png', 'gif'];
+        $ext = strtolower(pathinfo($imageName, PATHINFO_EXTENSION));
+
+        if (in_array($ext, $allowedExt)) {
+            // اسم جديد للصورة (عشان ميحصلش تعارض)
+            $newName = uniqid() . "." . $ext;
+
+            // المجلد اللي هتتخزن فيه
+            $uploadDir = "uploads/";
+
+            // لو المجلد مش موجود اعمله
+            if (!is_dir($uploadDir)) {
+                mkdir($uploadDir, 0777, true);
+            }
+
+            // انقل الصورة للمكان الجديد
+            if (move_uploaded_file($tmpName, $uploadDir . $newName)) {
+                return $newName; // رجع اسم الصورة
+            } else {
+                return false; // فشل الرفع
+            }
+        } else {
+            return false; // امتداد غير مسموح
+        }
+    } else {
+        return false; // مفيش صورة
+    }
+}

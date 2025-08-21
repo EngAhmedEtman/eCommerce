@@ -38,7 +38,7 @@
                         <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown"
                             role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <!-- صورة المستخدم -->
-                            <img src="uploads/avatars/<?php echo $_SESSION['user_image'] ?? 'default.png'; ?>"
+                            <img src="uploads/<?php echo $_SESSION['userImage'] ?? 'default.png'; ?>"
                                 class="rounded-circle me-2" alt="User Avatar" width="32" height="32">
                             <span><?php echo htmlspecialchars($_SESSION['username']); ?></span>
                         </a>

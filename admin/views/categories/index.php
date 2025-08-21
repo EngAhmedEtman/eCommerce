@@ -58,11 +58,13 @@
             </tr>
           </thead>
           <tbody>
-            <?php foreach ($categories as $categorie): ?>
+            <?php 
+            $i=1;
+            foreach ($categories as $categorie): ?>
               <tr>
-                <td><?php echo $categorie['id'] ?></td>
+                <td><?= $i++ ?></td>
                 <td><?php echo $categorie['name'] ?></td>
-                <td><?php echo $categorie['dscription'] ?></td>
+                <td><?php echo $categorie['description'] ?></td>
 
                 <!-- حالة التفعيل -->
                 <td>
